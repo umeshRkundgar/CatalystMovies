@@ -10,7 +10,7 @@ import UIKit
 extension UIImageView {
     func loadImage(from url: URL?) {
         guard let url = url else {
-            self.image = UIImage(named: "placeholder") // Set a default placeholder image
+            self.image = UIImage(named: "placeholder")
             return
         }
         
@@ -21,7 +21,7 @@ extension UIImageView {
                 }
             } else {
                 DispatchQueue.main.async {
-                    self.image = UIImage(named: "placeholder") // Set placeholder if loading fails
+                    self.image = UIImage(named: "placeholder")
                 }
             }
         }

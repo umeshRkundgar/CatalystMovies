@@ -16,7 +16,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="180" height="250"/>
                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 <subviews>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Alone" translatesAutoresizingMaskIntoConstraints="NO" id="L0f-Tu-hzb">
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="coming" translatesAutoresizingMaskIntoConstraints="NO" id="L0f-Tu-hzb">
                         <rect key="frame" x="5" y="5" width="170" height="240"/>
                     </imageView>
                 </subviews>
@@ -37,6 +37,6 @@
         </collectionViewCell>
     </objects>
     <resources>
-        <image name="Alone" width="3456" height="5184"/>
+        <image name="coming" width="7640" height="4585"/>
     </resources>
 </document>

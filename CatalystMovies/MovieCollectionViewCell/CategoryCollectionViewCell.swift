@@ -13,13 +13,13 @@ class CategoryCollectionViewCell: UICollectionViewCell {
     @IBOutlet var underlineView: UIView!
     override func awakeFromNib() {
         super.awakeFromNib()
-        underlineView.backgroundColor = .clear  // Initially hidden
+        underlineView.backgroundColor = .clear
     }
     
     func configure(with text: String, isSelected: Bool) {
         categoryLabel.text = text
-        categoryLabel.textColor = isSelected ? .white : .gray  // Change text color for selection
-        underlineView.backgroundColor = isSelected ? .white : .clear // Show underline for selected category
+        categoryLabel.textColor = isSelected ? .white : .gray
+        underlineView.backgroundColor = isSelected ? .white : .clear
         
     }
     

@@ -20,9 +20,9 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         if let layout = reloadCollectionVIew.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.scrollDirection = .vertical  // Ensure vertical scrolling
-            layout.minimumInteritemSpacing = 5 // Spacing between cells horizontally
-            layout.minimumLineSpacing = 5 // Spacing between rows vertically
+            layout.scrollDirection = .vertical
+            layout.minimumInteritemSpacing = 5
+            layout.minimumLineSpacing = 5
         }
         // Register XIB for both collections
         let nib = UINib(nibName: "MovieCollectionViewCell", bundle: nil)
@@ -83,7 +83,7 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == trendingCollectionView || collectionView == reloadCollectionVIew{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCollectionViewCell", for: indexPath) as! MovieCollectionViewCell
-            let movies = getMoviesForSelectedCategory() // Fetch movies based on selected category
+            let movies = getMoviesForSelectedCategory()
             if indexPath.row < movies.count{
                 let movie = movies[indexPath.row]
                 cell.posterImageView.loadImage(from: movie.posterURL)
@@ -113,20 +113,55 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
             default:
                 break
             }
+        }else if collectionView == reloadCollectionVIew{
+            let movie = getMoviesForSelectedCategory()[indexPath.row]
+            
+            let secondVC = storyboard?.instantiateViewController(withIdentifier: "MovieDetailsViewController") as! MovieDetailsViewController
+            secondVC.movieTitle = movie.title
+            let date = String(movie.releaseDate.prefix(4))
+            secondVC.releasedate = date
+            let dispatchGroup = DispatchGroup()
+            
+            
+            if let posterURL = URL(string: "https://image.tmdb.org/t/p/w500\(movie.posterPath ?? "")") {
+                dispatchGroup.enter()
+                URLSession.shared.dataTask(with: posterURL) { data, _, error in
+                    if let data = data, let image = UIImage(data: data) {
+                        secondVC.image = image
+                    }
+                    dispatchGroup.leave()
+                }.resume()
+            }
+            
+            
+            if let backdropURL = URL(string: "https://image.tmdb.org/t/p/w500\(movie.backdropPath ?? "")") {
+                dispatchGroup.enter()
+                URLSession.shared.dataTask(with: backdropURL) { data, _, error in
+                    if let data = data, let image = UIImage(data: data) {
+                        secondVC.backdImage = image
+                    }
+                    dispatchGroup.leave()
+                }.resume()
+            }
+            
+            
+            dispatchGroup.notify(queue: .main) {
+                self.navigationController?.pushViewController(secondVC, animated: true)
+            }
         }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         guard collectionView == reloadCollectionVIew else {
-            return CGSize(width: 180, height: 250) // Skip other collections
+            return CGSize(width: 180, height: 250)
         }
         
         let numberOfCellsPerRow: CGFloat = 3
-        let totalSpacing: CGFloat = 40  // Left & Right padding
-        let interItemSpacing: CGFloat = 5  // Spacing between cells
+        let totalSpacing: CGFloat = 40
+        let interItemSpacing: CGFloat = 5
         
         let availableWidth = collectionView.frame.width - totalSpacing - (interItemSpacing * (numberOfCellsPerRow - 1))
         let cellWidth = availableWidth / numberOfCellsPerRow
-        let cellHeight: CGFloat = 180  // Updated height to 180
+        let cellHeight: CGFloat = 180
         
         return CGSize(width: cellWidth, height: cellHeight)
         
@@ -137,9 +172,9 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         if collectionView == reloadCollectionVIew {
-            return 10 // Space between cells
+            return 10
         }
-        return 10 // Adjust spacing between horizontal items
+        return 10 
     }
     
     

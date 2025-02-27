@@ -17,7 +17,7 @@ class HomeViewModel {
     var onError: ((String) -> Void)?
     
     func fetchMovies(for category: MovieCategory) {
-        let apiKey = "154ad8f9017ced85e1b45f006f50d4a0"  // Replace with your actual API key
+        let apiKey = "154ad8f9017ced85e1b45f006f50d4a0"
         var urlString = ""
         
         switch category {
@@ -29,11 +29,11 @@ class HomeViewModel {
             urlString = "https://api.themoviedb.org/3/movie/top_rated?api_key=\(apiKey)&language=en-US&page=1"
         case .upcoming:
             urlString = "https://api.themoviedb.org/3/movie/upcoming?api_key=\(apiKey)&language=en-US&page=1"
-        case .trending:  // ✅ New Case Added
+        case .trending:
             urlString = "https://api.themoviedb.org/3/trending/movie/day?api_key=\(apiKey)&language=en-US"
         }
         
-        print("Fetching movies from URL: \(urlString)")  // Debugging log
+        print("Fetching movies from URL: \(urlString)")
         
         guard let url = URL(string: urlString) else {
             onError?("Invalid URL: \(urlString)")
@@ -51,7 +51,7 @@ class HomeViewModel {
             }
             
             if let jsonString = String(data: data, encoding: .utf8) {
-                print("Raw JSON Response: \(jsonString)")  // ✅ Debugging Response
+                print("Raw JSON Response: \(jsonString)")
             }
             
             do {
@@ -67,7 +67,7 @@ class HomeViewModel {
                     case .upcoming:
                         self?.upcomingMovies = decodedResponse.results
                     case .trending:
-                        self?.nowPlayingMovies = decodedResponse.results // ✅ Store Trending Movies in the Now Playing section or create a new variable
+                        self?.nowPlayingMovies = decodedResponse.results
                     }
                     self?.onDataUpdated?()
                 }
