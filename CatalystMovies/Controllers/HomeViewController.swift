@@ -16,9 +16,9 @@ class HomeViewController: UIViewController {
     
     private let loadingView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor(white: 0, alpha: 0.4) // Dim background
-        view.isHidden = true // Hide by default
-        view.tag = 999 // Assign tag to identify it
+        view.backgroundColor = UIColor(white: 0, alpha: 0.4)
+        view.isHidden = true
+        view.tag = 999
         return view
     }()
     
@@ -33,12 +33,10 @@ class HomeViewController: UIViewController {
     let categories = ["Now Playing", "Popular", "Top Rated", "Upcoming"]
     var selectedCategoryIndex = 0
     let viewModel = HomeViewModel()
-    // private var loadingView: UIView?
+   
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        //loadingView.frame = view.bounds
-        
         loadingView.isHidden = false
         activityIndicator.startAnimating()
         setupActivityIndicator()
@@ -247,7 +245,7 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
         if collectionView == reloadCollectionVIew {
             return 10
         }else if collectionView == trendingCollectionView{
-            return 10
+            return 15
         }
         return 25
     }

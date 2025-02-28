@@ -103,7 +103,6 @@ class MovieDetailsViewController: UIViewController {
                     } else {
                         self?.genreLabel.text = "Genre: N/A"
                     }
-                    //                    self?.genreLabel.text = "Genres: \(self?.genres.joined(separator: ", ") ?? "N/A")"
                 }
             case .failure(let error):
                 print("Error fetching movie details: \(error.localizedDescription)")
@@ -117,7 +116,7 @@ class MovieDetailsViewController: UIViewController {
             case .success(let trailerURL):
                 DispatchQueue.main.async {
                     self?.trailerURL = trailerURL
-                    self?.trailerButton.isHidden = false // Show button when trailer is available
+                    self?.trailerButton.isHidden = false
                 }
             case .failure(let error):
                 print("Error fetching trailer: \(error.localizedDescription)")
@@ -156,7 +155,6 @@ extension MovieDetailsViewController:UICollectionViewDelegate,UICollectionViewDa
             let castMembers = castMember[indexPath.row]
             castCell.nameLabel.text = castMembers.name
             castCell.image.loadImage(from: castMembers.profileURL)
-            print("profileURLprofileURLprofileURLprofileURL:-\(castMembers.profileURL) name:- \(castMembers.name)")
             return castCell
             
         }

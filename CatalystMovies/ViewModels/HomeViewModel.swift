@@ -25,7 +25,7 @@ class HomeViewModel {
     
     // MARK: - API Calls
     func fetchMovies(for category: MovieCategory) {
-        isLoading?(true)//start loading
+        isLoading?(true)
         print("Fetching started...")
         let apiKey = "154ad8f9017ced85e1b45f006f50d4a0"
         let urlString: String
@@ -53,11 +53,6 @@ class HomeViewModel {
         }
         
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
-            //            defer {
-            //                DispatchQueue.main.async {
-            //                    self?.isLoading?(false)
-            //                }
-            //            }
             if let error = error {
                 self?.onError?("Network Error: \(error.localizedDescription)")
                 self?.isLoading?(false)
@@ -67,7 +62,7 @@ class HomeViewModel {
                 DispatchQueue.main.async {
                     print("No data received")
                     self?.onError?("No data received")
-                    self?.isLoading?(false) // Hide indicator
+                    self?.isLoading?(false)
                 }
                 return
             }
