@@ -16,7 +16,7 @@ enum NetworkError: Error {
     case serverError(statusCode: Int)
     case unknown(Error)
     case notFound
-
+    
     var localizedDescription: String {
         switch self {
         case .invalidURL:

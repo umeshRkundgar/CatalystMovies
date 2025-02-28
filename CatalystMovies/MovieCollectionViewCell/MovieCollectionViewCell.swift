@@ -16,9 +16,9 @@ class MovieCollectionViewCell: UICollectionViewCell {
         // Initialization code
         posterImageView.layer.cornerRadius = 5
         indexLabel.layer.cornerRadius = 50/2
-                indexLabel.layer.masksToBounds = true
-                indexLabel.backgroundColor = .black.withAlphaComponent(0.5)
-                indexLabel.textColor = .white
+        indexLabel.layer.masksToBounds = true
+        indexLabel.backgroundColor = .black.withAlphaComponent(0.5)
+        indexLabel.textColor = .white
     }
-
+    
 }

@@ -10,7 +10,7 @@ struct MovieDetails: Codable {
     let runtime: Int?
     let genres: [Genre]
     let overview: String
-
+    
     enum CodingKeys: String, CodingKey {
         case runtime, genres, overview
     }

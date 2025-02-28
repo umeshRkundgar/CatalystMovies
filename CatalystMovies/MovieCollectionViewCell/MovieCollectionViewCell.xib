@@ -20,7 +20,7 @@
                         <rect key="frame" x="5" y="5" width="170" height="240"/>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N60-zt-6lH">
-                        <rect key="frame" x="1" y="199" width="50" height="50"/>
+                        <rect key="frame" x="5" y="195" width="50" height="50"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="50" id="AJF-4p-IZz"/>
                             <constraint firstAttribute="width" constant="50" id="VEC-OI-G7k"/>
@@ -34,9 +34,9 @@
             <viewLayoutGuide key="safeArea" id="ZTg-uK-7eu"/>
             <color key="backgroundColor" red="0.1069235727" green="0.1220631078" blue="0.15801915529999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstAttribute="bottom" secondItem="N60-zt-6lH" secondAttribute="bottom" constant="1" id="AqL-HY-3N8"/>
+                <constraint firstAttribute="bottom" secondItem="N60-zt-6lH" secondAttribute="bottom" constant="5" id="AqL-HY-3N8"/>
                 <constraint firstAttribute="trailing" secondItem="L0f-Tu-hzb" secondAttribute="trailing" constant="5" id="NXZ-6B-VYz"/>
-                <constraint firstItem="N60-zt-6lH" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="1" id="aSY-PO-mps"/>
+                <constraint firstItem="N60-zt-6lH" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="5" id="aSY-PO-mps"/>
                 <constraint firstItem="L0f-Tu-hzb" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" constant="5" id="k4N-F9-y1x"/>
                 <constraint firstAttribute="bottom" secondItem="L0f-Tu-hzb" secondAttribute="bottom" constant="5" id="nrN-U2-HOl"/>
                 <constraint firstItem="L0f-Tu-hzb" firstAttribute="top" secondItem="gTV-IL-0wX" secondAttribute="top" constant="5" id="yYj-7u-QK4"/>
