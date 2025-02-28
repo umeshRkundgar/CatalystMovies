@@ -14,12 +14,15 @@ struct Movie: Codable {
     let title: String
     let posterPath: String?
     let backdropPath: String?
-    let releaseDate: String
+    let releaseDate: String?
+    let overview: String
+    
     enum CodingKeys: String, CodingKey {
         case id, title
         case posterPath = "poster_path"
         case backdropPath = "backdrop_path"
         case releaseDate = "release_date"
+        case overview
     }
     
     var posterURL: URL? {

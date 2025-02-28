@@ -15,6 +15,9 @@
 		04AC77022D6E23DC00F0D460 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04AC77002D6E23DC00F0D460 /* LaunchScreen.storyboard */; };
 		04BDE94E2D7058060063CA1D /* DetailsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BDE94D2D7058060063CA1D /* DetailsCollectionViewCell.swift */; };
 		04BDE9502D70707F0063CA1D /* CastCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BDE94F2D70707F0063CA1D /* CastCollectionViewCell.swift */; };
+		04BDE9522D70B0590063CA1D /* CastMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BDE9512D70B0590063CA1D /* CastMember.swift */; };
+		04BDE9542D70E3290063CA1D /* MovieDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BDE9532D70E3290063CA1D /* MovieDetails.swift */; };
+		04EF542B2D716F26007D1FC4 /* TrailerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04EF542A2D716F26007D1FC4 /* TrailerResponse.swift */; };
 		04F1E9962D6EDFE800256C16 /* MovieCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F1E9942D6EDFE800256C16 /* MovieCollectionViewCell.swift */; };
 		04F1E9972D6EDFE800256C16 /* MovieCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 04F1E9952D6EDFE800256C16 /* MovieCollectionViewCell.xib */; };
 		04F1E99C2D6EF9C000256C16 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F1E99B2D6EF9C000256C16 /* Movie.swift */; };
@@ -40,6 +43,9 @@
 		04AC77032D6E23DC00F0D460 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		04BDE94D2D7058060063CA1D /* DetailsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsCollectionViewCell.swift; sourceTree = "<group>"; };
 		04BDE94F2D70707F0063CA1D /* CastCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastCollectionViewCell.swift; sourceTree = "<group>"; };
+		04BDE9512D70B0590063CA1D /* CastMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastMember.swift; sourceTree = "<group>"; };
+		04BDE9532D70E3290063CA1D /* MovieDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetails.swift; sourceTree = "<group>"; };
+		04EF542A2D716F26007D1FC4 /* TrailerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrailerResponse.swift; sourceTree = "<group>"; };
 		04F1E9942D6EDFE800256C16 /* MovieCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCollectionViewCell.swift; sourceTree = "<group>"; };
 		04F1E9952D6EDFE800256C16 /* MovieCollectionViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MovieCollectionViewCell.xib; sourceTree = "<group>"; };
 		04F1E99B2D6EF9C000256C16 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
@@ -135,6 +141,9 @@
 			children = (
 				04F1E99B2D6EF9C000256C16 /* Movie.swift */,
 				04F1E99D2D6EF9EB00256C16 /* MovieResponse.swift */,
+				04BDE9512D70B0590063CA1D /* CastMember.swift */,
+				04BDE9532D70E3290063CA1D /* MovieDetails.swift */,
+				04EF542A2D716F26007D1FC4 /* TrailerResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -257,10 +266,13 @@
 				04BDE9502D70707F0063CA1D /* CastCollectionViewCell.swift in Sources */,
 				04F1E9D82D6F876100256C16 /* MovieCategory.swift in Sources */,
 				04F1E99E2D6EF9EB00256C16 /* MovieResponse.swift in Sources */,
+				04BDE9522D70B0590063CA1D /* CastMember.swift in Sources */,
 				04F1E9962D6EDFE800256C16 /* MovieCollectionViewCell.swift in Sources */,
 				04F1E99C2D6EF9C000256C16 /* Movie.swift in Sources */,
 				04F1E9A62D6EFAED00256C16 /* MovieDetailsViewModel.swift in Sources */,
 				04F1E9A92D6EFB3E00256C16 /* NetworkError.swift in Sources */,
+				04BDE9542D70E3290063CA1D /* MovieDetails.swift in Sources */,
+				04EF542B2D716F26007D1FC4 /* TrailerResponse.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

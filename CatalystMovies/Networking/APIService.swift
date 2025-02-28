@@ -12,21 +12,33 @@ class APIService {
     private let baseURL = "https://api.themoviedb.org/3"
     private let apiKey = "154ad8f9017ced85e1b45f006f50d4a0"
     
-    func fetchMovies(endpoint: String, completion: @escaping (Result<[Movie], Error>) -> Void) {
+    func fetchMovies(endpoint: String, completion: @escaping (Result<[Movie], NetworkError>) -> Void) {
         let urlString = "\(baseURL)/\(endpoint)?api_key=\(apiKey)"
         guard let url = URL(string: urlString) else {
-            completion(.failure(NSError(domain: "Invalid URL", code: 400, userInfo: nil)))
+            completion(.failure(.invalidURL))
             return
         }
         
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
+            if let error = error as? URLError {
+                switch error.code{
+                case .notConnectedToInternet:
+                    completion(.failure(.noInternet))
+                default:
+                    completion(.failure(.unknown(error)))
+                }
                 return
             }
-            
+            guard let httpResponse = response as? HTTPURLResponse else{
+                completion(.failure(.requestFailed))
+                return
+            }
             guard let data = data else {
-                completion(.failure(NSError(domain: "No Data", code: 404, userInfo: nil)))
+                completion(.failure(.requestFailed))
+                return
+            }
+            guard(200...299).contains(httpResponse.statusCode) else{
+                completion(.failure(.serverError(statusCode: httpResponse.statusCode)))
                 return
             }
             if let jsonString = String(data: data, encoding: .utf8) {
@@ -39,10 +51,133 @@ class APIService {
                     completion(.success(decodedResponse.results))
                 }
             } catch {
-                completion(.failure(error))
+                completion(.failure(.decodingFailed))
             }
         }
         
         task.resume()
+    }
+    func fetchCast(movieID: Int, completion: @escaping (Result<[Cast], NetworkError>) -> Void) {
+            let urlString = "\(baseURL)/movie/\(movieID)/credits?api_key=\(apiKey)"
+            
+            guard let url = URL(string: urlString) else {
+                completion(.failure(.invalidURL))
+                return
+            }
+
+            URLSession.shared.dataTask(with: url) { data,response, error in
+                if let error = error  as? URLError {
+                    switch error.code{
+                    case .notConnectedToInternet:
+                        completion(.failure(.noInternet))
+                    default:
+                        completion(.failure(.unknown(error)))
+                    }
+                    return
+                }
+                guard let httpResponse = response as? HTTPURLResponse else{
+                    completion(.failure(.requestFailed))
+                    return
+                }
+                guard (200...299).contains(httpResponse.statusCode) else{
+                    completion(.failure(.serverError(statusCode: httpResponse.statusCode)))
+                    return
+                }
+                guard let data = data else {
+                    completion(.failure(.requestFailed))
+                    return
+                }
+
+                do {
+                    let decodedResponse = try JSONDecoder().decode(CastResponse.self, from: data)
+                    DispatchQueue.main.async {
+                        completion(.success(decodedResponse.cast))
+                    }
+                } catch {
+                    completion(.failure(.decodingFailed))
+                }
+            }.resume()
+        }
+    func fetchTrailer(movieID: Int, completion: @escaping (Result<String, NetworkError>) -> Void) {
+           let urlString = "\(baseURL)/movie/\(movieID)/videos?api_key=\(apiKey)"
+           
+           guard let url = URL(string: urlString) else {
+               completion(.failure(.invalidURL))
+               return
+           }
+
+           URLSession.shared.dataTask(with: url) { data, response, error in
+               if let error = error  as? URLError {
+                   switch error.code{
+                   case .notConnectedToInternet:
+                       completion(.failure(.noInternet))
+                   default:
+                       completion(.failure(.unknown(error)))
+                   }
+                   return
+               }
+
+               guard let httpResponse = response as? HTTPURLResponse else{
+                   completion(.failure(.requestFailed))
+                   return
+               }
+               guard (200...299).contains(httpResponse.statusCode) else{
+                   completion(.failure(.serverError(statusCode: httpResponse.statusCode)))
+                   return
+               }
+               guard let data = data else {
+                   completion(.failure(.requestFailed))
+                   return
+               }
+
+               do {
+                   let decodedResponse = try JSONDecoder().decode(TrailerResponse.self, from: data)
+                   if let firstTrailer = decodedResponse.results.first(where: { $0.site.lowercased() == "youtube" }) {
+                       let youtubeURL = "https://www.youtube.com/watch?v=\(firstTrailer.key)"
+                       completion(.success(youtubeURL))
+                   } else {
+                       completion(.failure(.notFound))
+                   }
+               } catch {
+                   completion(.failure(.decodingFailed))
+               }
+           }.resume()
+       }
+}
+
+extension APIService {
+    func fetchMovieDetails(movieID: Int, completion: @escaping (Result<MovieDetails, NetworkError>) -> Void) {
+        let urlString = "\(baseURL)/movie/\(movieID)?api_key=\(apiKey)&language=en-US"
+
+        guard let url = URL(string: urlString) else {
+            completion(.failure(.invalidURL))
+            return
+        }
+
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error = error  as? URLError {
+                switch error.code{
+                case .notConnectedToInternet:
+                    completion(.failure(.noInternet))
+                default:
+                    completion(.failure(.unknown(error)))
+                }
+                return
+            }
+
+            guard let data = data else {
+                completion(.failure(.requestFailed))
+                return
+            }
+
+            do {
+                let decodedResponse = try JSONDecoder().decode(MovieDetails.self, from: data)
+                DispatchQueue.main.async {
+                    completion(.success(decodedResponse))
+                }
+            } catch {
+                completion(.failure(.decodingFailed))
+            }
+        }.resume()
     }
 }

@@ -14,16 +14,17 @@ class HomeViewController: UIViewController {
     @IBOutlet var categoryCollectionView: UICollectionView!
     
     @IBOutlet var reloadCollectionVIew: UICollectionView!
+    
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     let categories = ["Now Playing", "Popular", "Top Rated", "Upcoming"]
     var selectedCategoryIndex = 0
     let viewModel = HomeViewModel()
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let layout = reloadCollectionVIew.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.scrollDirection = .vertical
-            layout.minimumInteritemSpacing = 5
-            layout.minimumLineSpacing = 5
-        }
+        view.addSubview(activityIndicator)
+        activityIndicator.center = view.center
+        setupCollectionView(reloadCollectionVIew, scrollDirection: .vertical)
+        setupCollectionView(trendingCollectionView, scrollDirection: .horizontal)
         // Register XIB for both collections
         let nib = UINib(nibName: "MovieCollectionViewCell", bundle: nil)
         trendingCollectionView.register(nib, forCellWithReuseIdentifier: "MovieCollectionViewCell")
@@ -43,12 +44,24 @@ class HomeViewController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
         reloadCollectionVIew.collectionViewLayout.invalidateLayout()
-        //reloadCollectionVIew.reloadData()
+        trendingCollectionView.reloadData()
     }
+    private func setupCollectionView(_ collectionView: UICollectionView, scrollDirection: UICollectionView.ScrollDirection) {
+            if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+                layout.scrollDirection = scrollDirection
+                layout.minimumInteritemSpacing = 5
+                layout.minimumLineSpacing = 5
+            }
+        }
     private func setupBindings() {
-        viewModel.onDataUpdated = { [weak self] in
+        viewModel.onTrendingUpdated = { [weak self] in
             self?.trendingCollectionView.reloadData()
+            
+        }
+        viewModel.onDataUpdated = { [weak self] in
+        
             self?.reloadCollectionVIew.reloadData()
         }
         viewModel.onError = { errorMessage in
@@ -57,7 +70,12 @@ class HomeViewController: UIViewController {
     }
     
     private func fetchMovies(for category: MovieCategory) {
+        activityIndicator.startAnimating()
         viewModel.fetchMovies(for: category)
+        DispatchQueue.main.async {
+            self.activityIndicator.startAnimating()
+        }
+        
     }
     func getMoviesForSelectedCategory() -> [Movie] {
         switch selectedCategoryIndex {
@@ -72,27 +90,35 @@ class HomeViewController: UIViewController {
 
 extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == trendingCollectionView || collectionView == reloadCollectionVIew {
-            return getMoviesForSelectedCategory().count
-        } else {
-            return categories.count
-        }
+        if collectionView == trendingCollectionView {
+                    return viewModel.trendingMovies.count  // ✅ Only trending movies
+                } else if collectionView == reloadCollectionVIew {
+                    return getMoviesForSelectedCategory().count  // ✅ Category-based movies
+                } else {
+                    return categories.count  // ✅ Categories
+                }
         
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == trendingCollectionView || collectionView == reloadCollectionVIew{
+        if collectionView == trendingCollectionView {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCollectionViewCell", for: indexPath) as! MovieCollectionViewCell
-            let movies = getMoviesForSelectedCategory()
-            if indexPath.row < movies.count{
-                let movie = movies[indexPath.row]
+            let movie = viewModel.trendingMovies[indexPath.row]
                 cell.posterImageView.loadImage(from: movie.posterURL)
-            }
+            cell.indexLabel.text = "\(indexPath.row + 1)"
+            return cell
+        }else if collectionView == reloadCollectionVIew{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MovieCollectionViewCell", for: indexPath) as! MovieCollectionViewCell
+            cell.indexLabel.isHidden = true
+                        let movie = getMoviesForSelectedCategory()[indexPath.row]
+                        cell.posterImageView.loadImage(from: movie.posterURL)
+            
             return cell
         }else{
             let categoryCell = collectionView.dequeueReusableCell(withReuseIdentifier: "CategoryCollectionViewCell", for: indexPath) as! CategoryCollectionViewCell
             categoryCell.categoryLabel.text = categories[indexPath.row]
             categoryCell.configure(with: categories[indexPath.row], isSelected: indexPath.row == selectedCategoryIndex)
+            
             return categoryCell
         }
     }
@@ -115,39 +141,38 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
             }
         }else if collectionView == reloadCollectionVIew{
             let movie = getMoviesForSelectedCategory()[indexPath.row]
-            
-            let secondVC = storyboard?.instantiateViewController(withIdentifier: "MovieDetailsViewController") as! MovieDetailsViewController
-            secondVC.movieTitle = movie.title
-            let date = String(movie.releaseDate.prefix(4))
-            secondVC.releasedate = date
-            let dispatchGroup = DispatchGroup()
-            
-            
-            if let posterURL = URL(string: "https://image.tmdb.org/t/p/w500\(movie.posterPath ?? "")") {
-                dispatchGroup.enter()
-                URLSession.shared.dataTask(with: posterURL) { data, _, error in
-                    if let data = data, let image = UIImage(data: data) {
-                        secondVC.image = image
+                    
+                    let secondVC = storyboard?.instantiateViewController(withIdentifier: "MovieDetailsViewController") as! MovieDetailsViewController
+            secondVC.movieID = movie.id  // 🔹 Pass Movie ID for Cast Fetching
+                    secondVC.movieTitle = movie.title
+                   
+            secondVC.descriptionMovie = movie.overview
+            secondVC.releasedate = movie.releaseDate//String(movie.releaseDate?.prefix(4) ?? "")
+                    let dispatchGroup = DispatchGroup()
+
+                    if let posterURL = movie.posterURL {
+                        dispatchGroup.enter()
+                        URLSession.shared.dataTask(with: posterURL) { data, _, _ in
+                            if let data = data, let image = UIImage(data: data) {
+                                secondVC.image = image
+                            }
+                            dispatchGroup.leave()
+                        }.resume()
                     }
-                    dispatchGroup.leave()
-                }.resume()
-            }
-            
-            
-            if let backdropURL = URL(string: "https://image.tmdb.org/t/p/w500\(movie.backdropPath ?? "")") {
-                dispatchGroup.enter()
-                URLSession.shared.dataTask(with: backdropURL) { data, _, error in
-                    if let data = data, let image = UIImage(data: data) {
-                        secondVC.backdImage = image
+
+                    if let backdropURL = movie.backdropURL {
+                        dispatchGroup.enter()
+                        URLSession.shared.dataTask(with: backdropURL) { data, _, _ in
+                            if let data = data, let image = UIImage(data: data) {
+                                secondVC.backdImage = image
+                            }
+                            dispatchGroup.leave()
+                        }.resume()
                     }
-                    dispatchGroup.leave()
-                }.resume()
-            }
-            
-            
-            dispatchGroup.notify(queue: .main) {
-                self.navigationController?.pushViewController(secondVC, animated: true)
-            }
+
+                    dispatchGroup.notify(queue: .main) {
+                        self.navigationController?.pushViewController(secondVC, animated: true)
+                    }
         }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -173,9 +198,33 @@ extension HomeViewController:UICollectionViewDelegate,UICollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         if collectionView == reloadCollectionVIew {
             return 10
+        }else if collectionView == trendingCollectionView{
+            return 10
         }
-        return 10 
+        return 25
     }
     
-    
+    func loadImage(from path: String?, completion: @escaping (UIImage?) -> Void) {
+        guard let path = path, let url = URL(string: "https://image.tmdb.org/t/p/w500\(path)") else {
+            completion(nil) // If URL is invalid, return nil
+            return
+        }
+
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    completion(image)
+                }
+            } else {
+                DispatchQueue.main.async {
+                    completion(nil)  // If image fails to load, return nil
+                }
+            }
+        }.resume()
+    }
+    func showErrorAlert(message: String) {
+            let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+        }
 }
